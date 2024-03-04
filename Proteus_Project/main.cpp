@@ -136,10 +136,14 @@ int main() {
 
     if (test == true) {
         //test backwards and turn clockwise 180
-        float distanceRamp = -13;
+        float turnAngle = PI;
+        turnAngle /= 2;
+        moveForward(14, 25);
+        turnRobot(turnAngle);
+        moveForward(10, 25);
+        turnRobot(-turnAngle);
+        moveForward(4);
 
-        moveForward(distanceRamp, 30);
-        moveForward(-distanceRamp, 25);
 
     } else if (backup == false) {
         //wait til light turns on
