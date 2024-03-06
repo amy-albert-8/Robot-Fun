@@ -160,7 +160,7 @@ int main() {
         //readjust angle
         turnRobot(-angle+0.1);
         //move forward up the ramp
-        moveForward(31, 25);
+        moveForward(32, 25);
         Sleep(1.0);
 
         //move to ticket light
@@ -170,8 +170,10 @@ int main() {
         angle /= 4;
         turnRobot(angle);
         Sleep(1.0);
+
         //move forward to light
-        moveForward(20, 25);
+        moveForward(21, 25);
+        Sleep(1.0);
 
 
         //check the light color
