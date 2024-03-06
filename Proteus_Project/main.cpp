@@ -28,6 +28,7 @@ FEHMotor RightMotor(FEHMotor::Motor2, 9.0);
 FEHMotor LeftMotor(FEHMotor::Motor0, 9.0); 
 DigitalEncoder RightEncoder(FEHIO::P2_3);
 DigitalEncoder LeftEncoder(FEHIO::P2_0);
+FEHServo HandServo(FEHServo::Servo3);
  
 
 //check distance traveled
@@ -130,17 +131,22 @@ int main() {
     bool backup = false;
 
     if (test == true) {
+
+        //"Hand" Joint Servo Values
+        /*HandServo.SetMin(500);
+        HandServo.SetMax(2344);*/
+
         //test backwards and turn clockwise 180
-        lightSense = Cds.Value();
-        LCD.Clear();
-        LCD.Write(lightSense);
-        if (lightSense < 1) {
-            LCD.Clear(RED);
-            LCD.Write(lightSense);
-        } else if (lightSense > 1) {
-            LCD.Clear(BLUE);
-            LCD.Write(lightSense);
-        }
+
+        //Bottom Joint Servo Values
+        /*HandServo.SetMin(500);
+        HandServo.SetMax(2333);
+        HandServo.SetDegree(0);
+        Sleep(2.0);
+        HandServo.SetDegree(90);
+        Sleep(2.0);
+        HandServo.SetDegree(180);
+        Sleep(2.0);*/
 
 
     } else if (backup == false) {
@@ -160,7 +166,7 @@ int main() {
         //readjust angle
         turnRobot(-angle+0.1);
         //move forward up the ramp
-        moveForward(32, 25);
+        moveForward(32.5, 25);
         Sleep(1.0);
 
         //move to ticket light
@@ -172,7 +178,7 @@ int main() {
         Sleep(1.0);
 
         //move forward to light
-        moveForward(21, 25);
+        moveForward(20.5, 25);
         Sleep(1.0);
 
 
@@ -192,11 +198,11 @@ int main() {
         }
 
         //back up, turn, and move to hit correct ticket
-        moveForward(-colorFactor, 25);
+        moveForward(-colorFactor-1.7, 25);
         Sleep(1.0);
         turnRobot(-0.785);
         //find cos(theta)
-        float forward = sqrt(2)/2;
+        float forward = sqrt(2)/(2.2);
         forward *= colorFactor;
         //forward = colorFactor*cos(theta)
 
@@ -213,11 +219,11 @@ int main() {
         //turn 45 degrees
         turnRobot(0.785);
         //move back from the button
-        moveForward(forward, 25);
+        moveForward(forward+0.5, 25);
 
         //turn and go down ramp
-        turnRobot(1.57);
+        turnRobot(2.4);
         Sleep(1.0);
-        moveForward(20, 25);
+        moveForward(35, 25);
     }
 }
