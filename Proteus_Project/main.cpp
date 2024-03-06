@@ -17,6 +17,8 @@
 #define WHEEL_DISTANCE 6.772;
 #define ROBOT_POWER 25;
 #define NEGATIVE_ROBOT_POWER -25;
+#define FORTY_FIVE_DEGREES1 0.785;
+#define FORTY_FIVE_DEGREES2 -0.785;
 
 
 
@@ -45,8 +47,8 @@ void moveForward(float distance, int percent) {
     float distanceTraveled=0;
     RightEncoder.ResetCounts();
     if (distance > 0) {
-        RightMotor.SetPercent(percent);
-        LeftMotor.SetPercent(percent); 
+        RightMotor.SetPercent(percent+3);
+        LeftMotor.SetPercent(percent+5.5); 
         while (distanceTraveled < distance) { 
             int counts = 0;
             counts = RightEncoder.Counts();
@@ -60,7 +62,7 @@ void moveForward(float distance, int percent) {
     } else {
         distance *= -1;
         RightMotor.SetPercent(-percent);
-        LeftMotor.SetPercent(-percent);
+        LeftMotor.SetPercent(-percent-3);
         while (distanceTraveled < distance) {
             while (distanceTraveled < distance) { 
             int counts = 0;
@@ -81,7 +83,7 @@ void turnRobot(float angle) {
     if (angle > 0) {
         float angleMoved = 0; 
         float distanceTraveled = 0; 
-        RightMotor.SetPercent(25);
+        RightMotor.SetPercent(35);
         RightEncoder.ResetCounts();
         float distance;
         while (angleMoved < angle) {
@@ -98,7 +100,7 @@ void turnRobot(float angle) {
         angle *= -1;
         float angleMoved = 0; 
         float distanceTraveled = 0; 
-        LeftMotor.SetPercent(25);
+        LeftMotor.SetPercent(35);
         LeftEncoder.ResetCounts();
         float distance;
         while (angleMoved < angle) {
@@ -114,14 +116,7 @@ void turnRobot(float angle) {
     }
 }
 
-int main() {
-    float distanceStart = 31;
-    float ticketAngle = PI; 
-    ticketAngle /= 2;
-    float ticketDistance = 10;
-    float buttonDistance = 10;
-    float startAngle = -PI;
-    startAngle /= 6;
+int main() { 
     
     //move forward when light turns on
     float lightSense = Cds.Value();
@@ -136,13 +131,16 @@ int main() {
 
     if (test == true) {
         //test backwards and turn clockwise 180
-        float turnAngle = PI;
-        turnAngle /= 2;
-        moveForward(14, 25);
-        turnRobot(turnAngle);
-        moveForward(10, 25);
-        turnRobot(-turnAngle);
-        moveForward(4);
+        lightSense = Cds.Value();
+        LCD.Clear();
+        LCD.Write(lightSense);
+        if (lightSense < 1) {
+            LCD.Clear(RED);
+            LCD.Write(lightSense);
+        } else if (lightSense > 1) {
+            LCD.Clear(BLUE);
+            LCD.Write(lightSense);
+        }
 
 
     } else if (backup == false) {
@@ -151,56 +149,73 @@ int main() {
             lightSense = Cds.Value();
         }
         
-        //move forward up ramp
-        turnRobot(startAngle);
+        //move out of box and up ramp
+
+        //set angle to -pi/6
+        float angle = -PI;
+        angle /= 6;
+        turnRobot(angle);
+        //move forward out of box
         moveForward(1, 25);
-        turnRobot(-startAngle);
-        moveForward(distanceStart, 25);
-        Sleep(1.0);
-        //turn robot towards ticket
-        turnRobot(ticketAngle);
-        Sleep(1.0);
-
-        //move forward to touch ticket machine
-        moveForward(ticketDistance, 25);
-        Sleep(1.0);
-        turnRobot(-ticketAngle);
-        Sleep(1.0);
-        moveForward(6, 25);
-        Sleep(1.0);
-        float backupDistance = -10;
-        moveForward(-6, 25);
+        //readjust angle
+        turnRobot(-angle+0.1);
+        //move forward up the ramp
+        moveForward(31, 25);
         Sleep(1.0);
 
-        turnRobot(ticketAngle);
+        //move to ticket light
+
+        //set angle to pi/4
+        angle = PI;
+        angle /= 4;
+        turnRobot(angle);
         Sleep(1.0);
-        moveForward(15, 25);
+        //move forward to light
+        moveForward(20, 25);
+
+
+        //check the light color
+
+        float colorFactor = 7;
+        //if colorFactor = 7 -> blue (default ig)
+        //if colorFactor = 11 -> red
+        lightSense = Cds.Value();
+        if (lightSense < 1) {
+            LCD.Clear(RED);
+            LCD.Write(lightSense);
+            colorFactor = 11;
+        } else if (lightSense > 1) {
+            LCD.Clear(BLUE);
+            LCD.Write(lightSense);
+        }
+
+        //back up, turn, and move to hit correct ticket
+        moveForward(-colorFactor, 25);
         Sleep(1.0);
-        turnRobot(ticketAngle);
+        turnRobot(-0.785);
+        //find cos(theta)
+        float forward = sqrt(2)/2;
+        forward *= colorFactor;
+        //forward = colorFactor*cos(theta)
+
+        /*The assumption is that theta is 45 degrees, may need to update 
+        forward if the angle is found to be different.*/
+
+        //hopefully hitting the button
         Sleep(1.0);
-        moveForward(35, 25);
+        moveForward(forward, 25);
+        //backing up from the button
         Sleep(1.0);
-    } else if (backup == true) {
-        moveForward(-distanceStart, 25);
+        moveForward(-forward, 25);
         Sleep(1.0);
-        turnRobot(ticketAngle);
+        //turn 45 degrees
+        turnRobot(0.785);
+        //move back from the button
+        moveForward(forward, 25);
+
+        //turn and go down ramp
+        turnRobot(1.57);
         Sleep(1.0);
-        moveForward(-ticketDistance, 25);
-        Sleep(1.0);
-        turnRobot(ticketAngle);
-        Sleep(1.0);
-        moveForward(-buttonDistance, 25);
-        Sleep(1.0);
-        moveForward(5, 25);
-        Sleep(1.0);
-        turnRobot(ticketAngle);
-        Sleep(1.0);
-        moveForward(-15, 25);
-        Sleep(1.0);
-        turnRobot(ticketAngle);
-        Sleep(1.0);
-        moveForward(-35, 25);
-        Sleep(1.0);
-        
+        moveForward(20, 25);
     }
 }
