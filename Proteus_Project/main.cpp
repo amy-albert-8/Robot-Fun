@@ -9,6 +9,7 @@
 #include <FEHSD.h> 
 #include <string.h> 
 #include <stdio.h> 
+#include <FEHRCS.h>
 #include <math.h>
 
 #define WHEEL_RADIUS 1.25; 
@@ -29,6 +30,7 @@ FEHMotor LeftMotor(FEHMotor::Motor0, 9.0);
 DigitalEncoder RightEncoder(FEHIO::P2_3);
 DigitalEncoder LeftEncoder(FEHIO::P2_0);
 FEHServo HandServo(FEHServo::Servo3);
+FEHServo ArmServo(FEHServo::Servo7);
  
 
 //check distance traveled
@@ -132,21 +134,19 @@ int main() {
 
     if (test == true) {
 
-        //"Hand" Joint Servo Values
-        /*HandServo.SetMin(500);
-        HandServo.SetMax(2344);*/
-
-        //test backwards and turn clockwise 180
-
-        //Bottom Joint Servo Values
-        /*HandServo.SetMin(500);
-        HandServo.SetMax(2333);
-        HandServo.SetDegree(0);
-        Sleep(2.0);
-        HandServo.SetDegree(90);
-        Sleep(2.0);
-        HandServo.SetDegree(180);
-        Sleep(2.0);*/
+        ArmServo.SetMin(500);
+        ArmServo.SetMax(2333);
+        ArmServo.SetDegree(0);
+        LCD.Clear(RED);
+        LCD.WriteLine(0);
+        Sleep(3.0);
+        ArmServo.SetDegree(90);
+        LCD.Clear(PINK);
+        LCD.WriteLine(90);
+        Sleep(3.0);
+        ArmServo.SetDegree(180);
+        LCD.Clear(GREEN);
+        LCD.WriteLine(180);
 
 
     } else if (backup == false) {
@@ -162,12 +162,13 @@ int main() {
         angle /= 6;
         turnRobot(angle);
         //move forward out of box
-        moveForward(1, 25);
+        moveForward(1.5, 25);
         //readjust angle
         turnRobot(-angle+0.1);
         //move forward up the ramp
-        moveForward(32.5, 25);
+        moveForward(32, 25);
         Sleep(1.0);
+
 
         //move to ticket light
 
@@ -178,7 +179,7 @@ int main() {
         Sleep(1.0);
 
         //move forward to light
-        moveForward(20.5, 25);
+        moveForward(19.5, 25);
         Sleep(1.0);
 
 
@@ -211,7 +212,7 @@ int main() {
 
         //hopefully hitting the button
         Sleep(1.0);
-        moveForward(forward, 25);
+        moveForward(forward+0.2, 25);
         //backing up from the button
         Sleep(1.0);
         moveForward(-forward, 25);

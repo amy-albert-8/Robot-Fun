@@ -5,7 +5,8 @@
  Libraries/FEHServo.h Libraries/FEHAccel.h Drivers/i2c.h \
  Libraries/FEHBattery.h Libraries/FEHIO.h Libraries/FEHBuzzer.h \
  Libraries/FEHSD.h Drivers/SDHC.h Drivers/diskio.h Drivers/ff.h \
- Drivers/ffconf.h Drivers/ffconf.h Drivers/diskio.h Libraries/FEHFile.h
+ Drivers/ffconf.h Drivers/ffconf.h Drivers/diskio.h Libraries/FEHFile.h \
+ Libraries/FEHRCS.h Drivers/FEHXBee.h
 Libraries/FEHLCD.h:
 Drivers/spi.h:
 ../fehproteusfirmware/Startup/derivative.h:
@@ -30,3 +31,5 @@ Drivers/ffconf.h:
 Drivers/ffconf.h:
 Drivers/diskio.h:
 Libraries/FEHFile.h:
+Libraries/FEHRCS.h:
+Drivers/FEHXBee.h:
