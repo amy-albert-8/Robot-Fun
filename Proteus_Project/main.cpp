@@ -33,18 +33,6 @@ FEHServo HandServo(FEHServo::Servo3);
 FEHServo ArmServo(FEHServo::Servo7);
  
 
-//check distance traveled
-float checkDistance() {
-    float distance;
-    int counts = 0;
-    counts = RightEncoder.Counts();
-    distance = 2*PI;
-    distance *= counts;
-    distance *= WHEEL_RADIUS;
-    distance /= COUNT_TOTAL;
-    return distance;
-}
-
 //moveForward function
 void moveForward(float distance, int percent) {
     float distanceTraveled=0;
@@ -83,6 +71,8 @@ void moveForward(float distance, int percent) {
 
 //turnRobot function
 void turnRobot(float angle) {
+    angle *= PI;
+    angle /= 180;
     if (angle > 0) {
         float angleMoved = 0; 
         float distanceTraveled = 0; 
@@ -119,6 +109,14 @@ void turnRobot(float angle) {
     }
 }
 
+void moveHand(int angle) {
+    HandServo.SetDegree(angle);
+}
+
+void moveArm(int angle) {
+    ArmServo.SetDegree(angle);
+}
+
 int main() { 
     
     //move forward when light turns on
@@ -127,15 +125,16 @@ int main() {
     LCD.Write(lightSense);
     Sleep(1.0);
 
+    ArmServo.SetMin(500);
+    ArmServo.SetMax(2333);
+
     //if run testing code - true
     //if running a run code - false
     bool test = false;
-    bool backup = false;
+    int run = 1;
 
     if (test == true) {
 
-        ArmServo.SetMin(500);
-        ArmServo.SetMax(2333);
         ArmServo.SetDegree(0);
         LCD.Clear(RED);
         LCD.WriteLine(0);
@@ -149,7 +148,7 @@ int main() {
         LCD.WriteLine(180);
 
 
-    } else if (backup == false) {
+    } else if (run == 1) {
         //wait til light turns on
         while (lightSense > 2.9) {
             lightSense = Cds.Value();
@@ -158,13 +157,11 @@ int main() {
         //move out of box and up ramp
 
         //set angle to -pi/6
-        float angle = -PI;
-        angle /= 6;
-        turnRobot(angle);
+        turnRobot(-30);
         //move forward out of box
         moveForward(1.5, 25);
         //readjust angle
-        turnRobot(-angle+0.1);
+        turnRobot(-30);
         //move forward up the ramp
         moveForward(32, 25);
         Sleep(1.0);
@@ -173,9 +170,7 @@ int main() {
         //move to ticket light
 
         //set angle to pi/4
-        angle = PI;
-        angle /= 4;
-        turnRobot(angle);
+        turnRobot(45);
         Sleep(1.0);
 
         //move forward to light
@@ -201,7 +196,7 @@ int main() {
         //back up, turn, and move to hit correct ticket
         moveForward(-colorFactor-1.7, 25);
         Sleep(1.0);
-        turnRobot(-0.785);
+        turnRobot(-45);
         //find cos(theta)
         float forward = sqrt(2)/(2.2);
         forward *= colorFactor;
@@ -218,13 +213,43 @@ int main() {
         moveForward(-forward, 25);
         Sleep(1.0);
         //turn 45 degrees
-        turnRobot(0.785);
+        turnRobot(45);
         //move back from the button
         moveForward(forward+0.5, 25);
 
         //turn and go down ramp
-        turnRobot(2.4);
+        turnRobot(135);
         Sleep(1.0);
         moveForward(35, 25);
+    } else if (run == 2) {
+        /*
+        Assumption is that the robot begins the run facing the first ramp, 
+        if this assumption must be changed, simply turn robot to be facing the 
+        first ramp before proceeding with the rest of the run
+        */
+       //move to levers
+       moveForward(10, 25);
+       turnRobot(90);
+       //check which lever
+       float lever = 0;
+       int leverMultiply = RCS.GetCorrectLever();
+       lever *= leverMultiply;
+       //move to that lever
+       moveForward(18 + lever, 25);
+       turnRobot(90);
+       //drive up to lever
+       moveArm(90);
+       moveForward(5, 25);
+       Sleep(1.0);
+       //move arm down to push lever down
+       moveArm(0);
+       //back up
+       moveForward(-5, 25);
+       //wait a bit
+       Sleep(5.0);
+       //move forward
+       moveForward(5, 25);
+       //move arm up to push lever back up
+       moveArm(70);
     }
 }
