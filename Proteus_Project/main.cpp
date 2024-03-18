@@ -130,22 +130,29 @@ int main() {
 
     //if run testing code - true
     //if running a run code - false
-    bool test = false;
-    int run = 1;
+    bool test = true;
+    int run = 2;
 
     if (test == true) {
+        /*
+        Test to ensure the starting position cutout works, tests getting robot into proper
+        position for runs. The test should get the robot up the ramp to a consistent position each time. 
+        Using light as starting point. 
+        */
+       //wait til light turns on
+        while (lightSense > 2.9) {
+            lightSense = Cds.Value();
+        }
+        
+       turnRobot(-60);
+       Sleep(1.0);
+       moveForward(3, 25);
+       Sleep(1.0);
+       turnRobot(10);
+       Sleep(1.0);
+       moveForward(15, 25);
 
-        ArmServo.SetDegree(0);
-        LCD.Clear(RED);
-        LCD.WriteLine(0);
-        Sleep(3.0);
-        ArmServo.SetDegree(90);
-        LCD.Clear(PINK);
-        LCD.WriteLine(90);
-        Sleep(3.0);
-        ArmServo.SetDegree(180);
-        LCD.Clear(GREEN);
-        LCD.WriteLine(180);
+
 
 
     } else if (run == 1) {
@@ -227,22 +234,29 @@ int main() {
         if this assumption must be changed, simply turn robot to be facing the 
         first ramp before proceeding with the rest of the run
         */
+       //wait til light turns on
+        while (lightSense > 2.9) {
+            lightSense = Cds.Value();
+        }
+        
        //move to levers
        moveForward(10, 25);
        turnRobot(90);
+
        //check which lever
        float lever = 0;
-       int leverMultiply = RCS.GetCorrectLever();
-       lever *= leverMultiply;
+       int leverMultiply = RCS.GetCorrectLever()*3;
+       lever += leverMultiply;
+
        //move to that lever
        moveForward(18 + lever, 25);
        turnRobot(90);
        //drive up to lever
-       moveArm(90);
+       moveArm(0);
        moveForward(5, 25);
        Sleep(1.0);
        //move arm down to push lever down
-       moveArm(0);
+       moveArm(90);
        //back up
        moveForward(-5, 25);
        //wait a bit
@@ -250,6 +264,6 @@ int main() {
        //move forward
        moveForward(5, 25);
        //move arm up to push lever back up
-       moveArm(70);
+       moveArm(0);
     }
 }
