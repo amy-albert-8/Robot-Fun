@@ -118,7 +118,9 @@ void moveArm(int angle) {
 }
 
 int main() { 
-    
+    //initialize RCS course
+     //RCS.InitializeTouchMenu("B1C1qRo4r");
+ 
     //move forward when light turns on
     float lightSense = Cds.Value();
     LCD.Clear();
@@ -144,13 +146,13 @@ int main() {
             lightSense = Cds.Value();
         }
         
-       turnRobot(-60);
+       turnRobot(-65);
        Sleep(1.0);
        moveForward(3, 25);
        Sleep(1.0);
-       turnRobot(10);
+       turnRobot(15);
        Sleep(1.0);
-       moveForward(15, 25);
+       moveForward(20, 25);
 
 
 
@@ -229,18 +231,20 @@ int main() {
         Sleep(1.0);
         moveForward(35, 25);
     } else if (run == 2) {
-        /*
-        Assumption is that the robot begins the run facing the first ramp, 
-        if this assumption must be changed, simply turn robot to be facing the 
-        first ramp before proceeding with the rest of the run
-        */
+
        //wait til light turns on
         while (lightSense > 2.9) {
             lightSense = Cds.Value();
         }
         
        //move to levers
-       moveForward(10, 25);
+       turnRobot(-65);
+       Sleep(1.0);
+       moveForward(3, 25);
+       Sleep(1.0);
+       turnRobot(15);
+       moveForward(6, 25);
+       Sleep(1.0);
        turnRobot(90);
 
        //check which lever
@@ -249,21 +253,8 @@ int main() {
        lever += leverMultiply;
 
        //move to that lever
-       moveForward(18 + lever, 25);
+       moveForward(10 + lever, 25);
        turnRobot(90);
-       //drive up to lever
-       moveArm(0);
-       moveForward(5, 25);
-       Sleep(1.0);
-       //move arm down to push lever down
-       moveArm(90);
-       //back up
-       moveForward(-5, 25);
-       //wait a bit
-       Sleep(5.0);
-       //move forward
-       moveForward(5, 25);
-       //move arm up to push lever back up
-       moveArm(0);
+       //drive up to lever /*
     }
 }
