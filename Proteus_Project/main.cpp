@@ -16,18 +16,12 @@
 #define PI 3.14159265358979;
 #define COUNT_TOTAL 318;
 #define WHEEL_DISTANCE 6.772;
-#define ROBOT_POWER 25;
-#define NEGATIVE_ROBOT_POWER -25;
-#define FORTY_FIVE_DEGREES1 0.785;
-#define FORTY_FIVE_DEGREES2 -0.785;
-
-
 
 //declare all motors and pins
-AnalogInputPin Cds(FEHIO::P3_1); 
+AnalogInputPin Cds(FEHIO::P1_6); 
 FEHMotor RightMotor(FEHMotor::Motor2, 9.0); 
 FEHMotor LeftMotor(FEHMotor::Motor0, 9.0); 
-DigitalEncoder RightEncoder(FEHIO::P2_3);
+DigitalEncoder RightEncoder(FEHIO::P0_3);
 DigitalEncoder LeftEncoder(FEHIO::P2_0);
 FEHServo HandServo(FEHServo::Servo3);
 FEHServo ArmServo(FEHServo::Servo7);
@@ -38,8 +32,9 @@ void moveForward(float distance, int percent) {
     float distanceTraveled=0;
     RightEncoder.ResetCounts();
     if (distance > 0) {
-        RightMotor.SetPercent(percent+3);
-        LeftMotor.SetPercent(percent+5.5); 
+        float actPercent = 11.5/(Battery.Voltage())*percent;
+        RightMotor.SetPercent(actPercent);
+        LeftMotor.SetPercent(actPercent+3); 
         while (distanceTraveled < distance) { 
             int counts = 0;
             counts = RightEncoder.Counts();
@@ -52,8 +47,9 @@ void moveForward(float distance, int percent) {
         LeftMotor.Stop();
     } else {
         distance *= -1;
-        RightMotor.SetPercent(-percent);
-        LeftMotor.SetPercent(-percent-3);
+        float actPercent = 11.5/(Battery.Voltage())*percent;
+        RightMotor.SetPercent(-actPercent);
+        LeftMotor.SetPercent(-actPercent-3);
         while (distanceTraveled < distance) {
             while (distanceTraveled < distance) { 
             int counts = 0;
@@ -71,17 +67,26 @@ void moveForward(float distance, int percent) {
 
 //turnRobot function
 void turnRobot(float angle) {
+    /* If angle > 0, robot will turn counterclockwise, (direction of the unit circle)*/
+    //convert angle from degrees to radians
     angle *= PI;
     angle /= 180;
     if (angle > 0) {
+        //initialize values to 0
         float angleMoved = 0; 
         float distanceTraveled = 0; 
-        RightMotor.SetPercent(35);
+        //adjust for battery percentage
+        float percent = 11.5/(Battery.Voltage())*35;
+        //use only right motor
+        RightMotor.SetPercent(percent);
         RightEncoder.ResetCounts();
         float distance;
+        //check distance
         while (angleMoved < angle) {
+            //update counts
             int counts = 0;
             counts = RightEncoder.Counts();
+            //use distance to find angle moved
             distance = 2*PI;
             distance = distance * counts;
             distance = distance * WHEEL_RADIUS;
@@ -90,10 +95,15 @@ void turnRobot(float angle) {
         }
         RightMotor.Stop();
     } else {
+        //find positive angle
         angle *= -1;
+        //initialize values
         float angleMoved = 0; 
-        float distanceTraveled = 0; 
-        LeftMotor.SetPercent(35);
+        float distanceTraveled = 0;
+        //adjust for battery percentage
+        float percent = 11.5/(Battery.Voltage())*35; 
+        //set left motor, so robot turns clockwise
+        LeftMotor.SetPercent(percent);
         LeftEncoder.ResetCounts();
         float distance;
         while (angleMoved < angle) {
@@ -119,7 +129,7 @@ void moveArm(int angle) {
 
 int main() { 
     //initialize RCS course
-     //RCS.InitializeTouchMenu("B1C1qRo4r");
+     RCS.InitializeTouchMenu("B1C1qRo4r");
  
     //move forward when light turns on
     float lightSense = Cds.Value();
@@ -132,7 +142,7 @@ int main() {
 
     //if run testing code - true
     //if running a run code - false
-    bool test = true;
+    bool test = false;
     int run = 2;
 
     if (test == true) {
@@ -232,7 +242,45 @@ int main() {
         moveForward(35, 25);
     } else if (run == 2) {
 
-       //wait til light turns on
+        //wait til light turns on
+        while (lightSense > 2.9) {
+            lightSense = Cds.Value();
+        }
+        
+        //move to levers
+        turnRobot(-65);
+       Sleep(1.0);
+        moveForward(3, 25);
+        Sleep(1.0);
+        turnRobot(15);
+
+        //moveForward
+        Sleep(1.0);
+        turnRobot(90);
+
+        //check which lever
+        float lever = 0;
+        int leverMultiply = RCS.GetCorrectLever()*3;
+        lever += leverMultiply;
+
+        //move to that lever
+        moveForward(10 + lever, 25);
+        turnRobot(90);
+
+        /*If too close to or too far away from the lever, back up or
+        drive forward here.*/
+        //move to lever
+
+        //TODO: flip lever down
+        moveForward(-6, 25);
+        Sleep(5.0);
+        //TODO: move arm to below lever
+        moveForward(6,25);
+        //TODO: flip lever up
+
+    } else if (run=3) {
+        /*Start with arm sticking up*/
+        //wait til light turns on
         while (lightSense > 2.9) {
             lightSense = Cds.Value();
         }
@@ -243,18 +291,19 @@ int main() {
        moveForward(3, 25);
        Sleep(1.0);
        turnRobot(15);
-       moveForward(6, 25);
        Sleep(1.0);
        turnRobot(90);
 
-       //check which lever
-       float lever = 0;
-       int leverMultiply = RCS.GetCorrectLever()*3;
-       lever += leverMultiply;
+       moveForward(5, 25);
+       //flip lever down
+       //moveArm(90);
+       moveForward(-2, 25);
+       //move arm to below lever position
+       //moveArm(95);
+       Sleep(5.0);
+       moveForward(2, 25);
+       //flip lever up
+       //moveArm(75);
 
-       //move to that lever
-       moveForward(10 + lever, 25);
-       turnRobot(90);
-       //drive up to lever /*
     }
 }
