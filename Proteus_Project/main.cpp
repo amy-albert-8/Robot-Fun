@@ -129,7 +129,7 @@ void moveArm(int angle) {
 
 int main() { 
     //initialize RCS course
-     RCS.InitializeTouchMenu("B1C1qRo4r");
+     //RCS.InitializeTouchMenu("B1C1qRo4r");
  
     //move forward when light turns on
     float lightSense = Cds.Value();
@@ -137,13 +137,17 @@ int main() {
     LCD.Write(lightSense);
     Sleep(1.0);
 
-    ArmServo.SetMin(500);
+    ArmServo.SetMin(553);
     ArmServo.SetMax(2333);
+    HandServo.SetMin(927);
+    HandServo.SetMax(2333);
+    HandServo.SetDegree(100);
+    ArmServo.SetDegree(0);
 
     //if run testing code - true
     //if running a run code - false
-    bool test = false;
-    int run = 2;
+    bool test = test;
+    int run = 4;
 
     if (test == true) {
         /*
@@ -152,22 +156,13 @@ int main() {
         Using light as starting point. 
         */
        //wait til light turns on
-        while (lightSense > 2.9) {
-            lightSense = Cds.Value();
-        }
+
+        moveForward(6, 25);
         
-       turnRobot(-65);
-       Sleep(1.0);
-       moveForward(3, 25);
-       Sleep(1.0);
-       turnRobot(15);
-       Sleep(1.0);
-       moveForward(20, 25);
-
-
 
 
     } else if (run == 1) {
+        /*Checkpoint 2: Up to the light, hit the ticket and go back down*/
         //wait til light turns on
         while (lightSense > 2.9) {
             lightSense = Cds.Value();
@@ -175,7 +170,6 @@ int main() {
         
         //move out of box and up ramp
 
-        //set angle to -pi/6
         turnRobot(-30);
         //move forward out of box
         moveForward(1.5, 25);
@@ -278,8 +272,10 @@ int main() {
         moveForward(6,25);
         //TODO: flip lever up
 
-    } else if (run=3) {
-        /*Start with arm sticking up*/
+    } else if (run==3) {
+        /*Attempt to get full credit on Checkpoint 3
+        without getting the correct lever, will only hit lever A*/
+
         //wait til light turns on
         while (lightSense > 2.9) {
             lightSense = Cds.Value();
@@ -290,20 +286,43 @@ int main() {
        Sleep(1.0);
        moveForward(3, 25);
        Sleep(1.0);
-       turnRobot(15);
+       turnRobot(20);
+       moveForward(-5, 25);
        Sleep(1.0);
        turnRobot(90);
 
-       moveForward(5, 25);
+       moveForward(4.5, 25);
+       Sleep(1.0);
        //flip lever down
-       //moveArm(90);
-       moveForward(-2, 25);
+       moveArm(85);
+       Sleep(1.0);
+       moveForward(-4, 25);
+       Sleep(1.0);
        //move arm to below lever position
-       //moveArm(95);
+       moveArm(95);
        Sleep(5.0);
-       moveForward(2, 25);
+       moveForward(4, 25);
        //flip lever up
-       //moveArm(75);
+       moveArm(65);
+    } else if(run==4) {
+        //wait til light turns on
+        while (lightSense > 2.9) {
+            lightSense = Cds.Value();
+        }
+        
+        //move to levers
+        turnRobot(-65);
+        Sleep(1.0);
+        moveForward(3, 25);
+        Sleep(1.0);
+        turnRobot(15);
 
+        moveForward(30, 30);
+        turnRobot(90);
+        moveForward(10, 25);
+        turnRobot(-90);
+        moveForward(7, 25);
+        turnRobot(-90);
+        moveForward(5,25);
     }
 }
