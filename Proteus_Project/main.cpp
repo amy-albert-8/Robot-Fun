@@ -146,7 +146,7 @@ int main() {
 
     //if run testing code - true
     //if running a run code - false
-    bool test = test;
+    bool test = false;
     int run = 4;
 
     if (test == true) {
@@ -272,7 +272,7 @@ int main() {
         moveForward(6,25);
         //TODO: flip lever up
 
-    } else if (run==3) {
+    } else if (run == 3) {
         /*Attempt to get full credit on Checkpoint 3
         without getting the correct lever, will only hit lever A*/
 
@@ -304,25 +304,36 @@ int main() {
        moveForward(4, 25);
        //flip lever up
        moveArm(65);
-    } else if(run==4) {
+    } else if(run == 4) {
         //wait til light turns on
         while (lightSense > 2.9) {
             lightSense = Cds.Value();
         }
         
-        //move to levers
+        //readjust out of box
         turnRobot(-65);
         Sleep(1.0);
         moveForward(3, 25);
         Sleep(1.0);
-        turnRobot(15);
+        turnRobot(22);
 
-        moveForward(30, 30);
+        //up the ramp + turn
+        moveForward(25, 30);
         turnRobot(90);
+        //move past luggage drop + turn towards ticket
         moveForward(10, 25);
         turnRobot(-90);
-        moveForward(7, 25);
+        //move towards ticket + turn towards passport
+        moveForward(7.5, 25);
         turnRobot(-90);
-        moveForward(5,25);
+        //set arm down
+        moveArm(90);
+        Sleep (1.0);
+        //move up to passport + stick arm in
+        //moveForward(5,25);
+        //push passport stamp up
+        //moveHand(190);
+        //Sleep(1.0);
+        //turnHand(100);
     }
 }
