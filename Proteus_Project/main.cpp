@@ -34,7 +34,7 @@ void moveForward(float distance, int percent) {
     if (distance > 0) {
         float actPercent = 11.5/(Battery.Voltage())*percent;
         RightMotor.SetPercent(actPercent);
-        LeftMotor.SetPercent(actPercent+3); 
+        LeftMotor.SetPercent(actPercent); 
         while (distanceTraveled < distance) { 
             int counts = 0;
             counts = RightEncoder.Counts();
@@ -49,7 +49,7 @@ void moveForward(float distance, int percent) {
         distance *= -1;
         float actPercent = 11.5/(Battery.Voltage())*percent;
         RightMotor.SetPercent(-actPercent);
-        LeftMotor.SetPercent(-actPercent-3);
+        LeftMotor.SetPercent(-actPercent);
         while (distanceTraveled < distance) {
             while (distanceTraveled < distance) { 
             int counts = 0;
@@ -157,7 +157,11 @@ int main() {
         */
        //wait til light turns on
 
-        moveForward(6, 25);
+        moveArm(85);
+        Sleep(2.0);
+        moveHand(10);
+        Sleep(2.0);
+        moveHand(100);
         
 
 
@@ -313,27 +317,31 @@ int main() {
         //readjust out of box
         turnRobot(-65);
         Sleep(1.0);
-        moveForward(3, 25);
+        moveForward(4, 35);
         Sleep(1.0);
-        turnRobot(22);
+        turnRobot(15);
 
         //up the ramp + turn
-        moveForward(25, 30);
+        moveForward(25, 35);
         turnRobot(90);
+        //back up into wall to restraighten
+        moveForward(-13, 35);
         //move past luggage drop + turn towards ticket
-        moveForward(10, 25);
+        moveForward(14, 35);
         turnRobot(-90);
         //move towards ticket + turn towards passport
-        moveForward(7.5, 25);
-        turnRobot(-90);
+        moveForward(8.5, 35);
+        turnRobot(-96);
         //set arm down
-        moveArm(90);
+        moveArm(85);
         Sleep (1.0);
-        //move up to passport + stick arm in
-        //moveForward(5,25);
-        //push passport stamp up
-        //moveHand(190);
-        //Sleep(1.0);
-        //turnHand(100);
+
+        moveForward(1,25);
+
+        Sleep(1.0);
+        moveHand(10);
+
+        Sleep(1.0);
+        moveHand(100);
     }
 }
