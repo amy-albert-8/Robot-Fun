@@ -16,11 +16,12 @@
 #define PI 3.14159265358979;
 #define COUNT_TOTAL 318;
 #define WHEEL_DISTANCE 6.772;
+#define NOTE .22058824
 
 //declare all motors and pins
 AnalogInputPin Cds(FEHIO::P1_6); 
-FEHMotor RightMotor(FEHMotor::Motor2, 9.0); 
-FEHMotor LeftMotor(FEHMotor::Motor0, 9.0); 
+FEHMotor RightMotor(FEHMotor::Motor3, 9.0); 
+FEHMotor LeftMotor(FEHMotor::Motor1, 9.0); 
 DigitalEncoder RightEncoder(FEHIO::P0_3);
 DigitalEncoder LeftEncoder(FEHIO::P2_0);
 FEHServo HandServo(FEHServo::Servo3);
@@ -127,6 +128,23 @@ void moveArm(int angle) {
     ArmServo.SetDegree(angle);
 }
 
+void playSong() {
+    //mamma mia
+    Buzzer.Tone(FEHBuzzer::E4, NOTE );
+    Buzzer.Tone(FEHBuzzer::D4, NOTE );
+    Buzzer.Tone(FEHBuzzer::E4, NOTE );
+    Buzzer.Tone(FEHBuzzer::D4, NOTE );
+    Sleep(NOTE);
+    //here I go again
+    Buzzer.Tone(FEHBuzzer::D4, NOTE );
+    Buzzer.Tone(FEHBuzzer::D4, NOTE );
+    Buzzer.Tone(FEHBuzzer::E4, NOTE );
+    Buzzer.Tone(FEHBuzzer::Fs4, NOTE );
+    Buzzer.Tone(FEHBuzzer::E4, NOTE );
+    Buzzer.Tone(FEHBuzzer::D4, NOTE );
+    Sleep(NOTE);
+}
+
 int main() { 
     //initialize RCS course
      //RCS.InitializeTouchMenu("B1C1qRo4r");
@@ -137,17 +155,20 @@ int main() {
     LCD.Write(lightSense);
     Sleep(1.0);
 
+    //set servo maxes and mins  
     ArmServo.SetMin(553);
     ArmServo.SetMax(2333);
-    HandServo.SetMin(927);
-    HandServo.SetMax(2333);
-    HandServo.SetDegree(100);
-    ArmServo.SetDegree(0);
+    //HandServo.SetMin(500);
+    //HandServo.SetMax(2333);
+
+    //HandServo.SetDegree(115);
+    ArmServo.SetDegree(50);
+    //playSong();
 
     //if run testing code - true
     //if running a run code - false
     bool test = false;
-    int run = 4;
+    int run = 5;
 
     if (test == true) {
         /*
@@ -156,12 +177,11 @@ int main() {
         Using light as starting point. 
         */
        //wait til light turns on
-
-        moveArm(85);
-        Sleep(2.0);
+ 
+        Sleep(5.0);
         moveHand(10);
         Sleep(2.0);
-        moveHand(100);
+        moveHand(115);
         
 
 
@@ -336,12 +356,36 @@ int main() {
         moveArm(85);
         Sleep (1.0);
 
-        moveForward(1,25);
+        moveForward(0.8,25);
 
         Sleep(1.0);
-        moveHand(10);
+        moveHand(5);
 
         Sleep(1.0);
         moveHand(100);
+
+        Sleep(1.0);
+        moveForward(-6, 35);
+        moveArm(0);
+    } else if (run == 5) {
+
+        //wait til light turns on
+        while (lightSense > 2.9) {
+            lightSense = Cds.Value();
+        }
+
+        //move to luggage drop
+        moveForward(10, 30);
+        turnRobot(-45);
+        moveForward(7, 30);
+        Sleep(1.5);
+        //drop luggage
+        //moveHand(5);
+        Sleep(1.5);
+        //moves back to hit button
+        moveForward(-8,30);
+        turnRobot(45);
+        moveForward(-18, 25);
+        
     }
 }
