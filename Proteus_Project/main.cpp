@@ -20,11 +20,11 @@
 
 //declare all motors and pins
 AnalogInputPin Cds(FEHIO::P1_6); 
-FEHMotor RightMotor(FEHMotor::Motor3, 9.0); 
-FEHMotor LeftMotor(FEHMotor::Motor1, 9.0); 
+FEHMotor RightMotor(FEHMotor::Motor2, 9.0); 
+FEHMotor LeftMotor(FEHMotor::Motor0, 9.0); 
 DigitalEncoder RightEncoder(FEHIO::P0_3);
 DigitalEncoder LeftEncoder(FEHIO::P2_0);
-FEHServo HandServo(FEHServo::Servo3);
+FEHServo HandServo(FEHServo::Servo4);
 FEHServo ArmServo(FEHServo::Servo7);
  
 
@@ -147,7 +147,7 @@ void playSong() {
 
 int main() { 
     //initialize RCS course
-     //RCS.InitializeTouchMenu("B1C1qRo4r");
+    RCS.InitializeTouchMenu("B1C1qRo4r");
  
     //move forward when light turns on
     float lightSense = Cds.Value();
@@ -161,27 +161,21 @@ int main() {
     //HandServo.SetMin(500);
     //HandServo.SetMax(2333);
 
-    //HandServo.SetDegree(115);
-    ArmServo.SetDegree(50);
+    ArmServo.SetDegree(45);
+    HandServo.SetDegree(65);
     //playSong();
 
     //if run testing code - true
     //if running a run code - false
     bool test = false;
-    int run = 5;
+    int run = 6;
 
     if (test == true) {
-        /*
-        Test to ensure the starting position cutout works, tests getting robot into proper
-        position for runs. The test should get the robot up the ramp to a consistent position each time. 
-        Using light as starting point. 
-        */
-       //wait til light turns on
  
-        Sleep(5.0);
-        moveHand(10);
         Sleep(2.0);
-        moveHand(115);
+        moveHand(180);
+        Sleep(2.0);
+        moveHand(68);
         
 
 
@@ -220,6 +214,7 @@ int main() {
         float colorFactor = 7;
         //if colorFactor = 7 -> blue (default ig)
         //if colorFactor = 11 -> red
+        Sleep (1.0);
         lightSense = Cds.Value();
         if (lightSense < 1) {
             LCD.Clear(RED);
@@ -231,7 +226,7 @@ int main() {
         }
 
         //back up, turn, and move to hit correct ticket
-        moveForward(-colorFactor-1.7, 25);
+        moveForward(-colorFactor-3, 25);
         Sleep(1.0);
         turnRobot(-45);
         //find cos(theta)
@@ -264,10 +259,13 @@ int main() {
         while (lightSense > 2.9) {
             lightSense = Cds.Value();
         }
+        //hit start button
+        moveForward(-4, 30);
+        moveForward(4, 30);
         
         //move to levers
         turnRobot(-65);
-       Sleep(1.0);
+        Sleep(1.0);
         moveForward(3, 25);
         Sleep(1.0);
         turnRobot(15);
@@ -372,20 +370,103 @@ int main() {
         //wait til light turns on
         while (lightSense > 2.9) {
             lightSense = Cds.Value();
-        }
+        }  
+
+         //hit start button
+        moveForward(-4, 30);
+        moveForward(4, 30);
 
         //move to luggage drop
-        moveForward(10, 30);
+        moveForward(9.5, 30);
         turnRobot(-45);
-        moveForward(7, 30);
-        Sleep(1.5);
-        //drop luggage
-        //moveHand(5);
-        Sleep(1.5);
+        moveForward(5, 30);
+
+
+        moveHand(180);
+        moveArm(55);
+        Sleep(0.5);
+        moveArm(30);
+
+        Sleep(1.0);
         //moves back to hit button
         moveForward(-8,30);
         turnRobot(45);
-        moveForward(-18, 25);
+        moveForward(-19, 35);
         
+    } else if(run == 6) {
+        /*
+        Entire Course Run!!!
+        */
+
+       //wait til light turns on
+        while (lightSense > 2.9) {
+            lightSense = Cds.Value();
+        }
+        //hit start button
+        moveForward(-4, 30);
+        moveForward(4, 30);
+
+    /*Luggage Drop Off*/
+
+        //move to luggage drop
+        moveForward(9, 30);
+        turnRobot(-45);
+        moveForward(5, 30);
+
+        //drop luggage
+        moveHand(180);
+        moveArm(55);
+        Sleep(0.5);
+        moveArm(30);
+
+        //moves back to adjust on wall
+        moveForward(-23, 30);
+        moveArm(0);
+
+    /*Ticket Kiosk*/
+
+        //get up the ramp
+        moveForward(10, 30);
+        turnRobot(-45);
+        moveForward(9.5, 30);
+        turnRobot(45);
+        moveForward(20, 30);
+
+        //adjust against wall
+        turnRobot(90);
+        moveForward(-10, 30);
+
+        //move to ticket light
+        moveForward(7, 30);
+        turnRobot(-45);
+        moveForward(14.5, 30);
+
+        //get color of the light
+        float colorFactor = 7;
+        float time = TimeNow()+2;
+        //if colorFactor = 7 -> blue (default ig)
+        //if colorFactor = 11 -> red
+        while (time > TimeNow()) {
+            lightSense = Cds.Value();
+            if (lightSense < 1) {
+                LCD.Clear(RED);
+                LCD.Write(lightSense);
+                colorFactor = 11;
+            } else if (lightSense > 1) {
+                LCD.Clear(BLUE);
+                LCD.Write(lightSense);
+            }
+        }
+
+        //readjust against red wall
+        moveForward(4, 30);
+
+
+
+
+
+
+
+
     }
 }
