@@ -20,11 +20,11 @@
 
 //declare all motors and pins
 AnalogInputPin Cds(FEHIO::P1_6); 
-FEHMotor RightMotor(FEHMotor::Motor2, 9.0); 
-FEHMotor LeftMotor(FEHMotor::Motor0, 9.0); 
+FEHMotor RightMotor(FEHMotor::Motor3, 9.0); 
+FEHMotor LeftMotor(FEHMotor::Motor1, 9.0); 
 DigitalEncoder RightEncoder(FEHIO::P0_3);
 DigitalEncoder LeftEncoder(FEHIO::P2_0);
-FEHServo HandServo(FEHServo::Servo4);
+FEHServo HandServo(FEHServo::Servo3);
 FEHServo ArmServo(FEHServo::Servo7);
  
 
@@ -145,16 +145,19 @@ void playSong() {
     Sleep(NOTE);
 }
 
-int main() { 
-    //initialize RCS course
-    RCS.InitializeTouchMenu("B1C1qRo4r");
- 
-    //move forward when light turns on
-    float lightSense = Cds.Value();
-    LCD.Clear();
-    LCD.Write(lightSense);
-    Sleep(1.0);
+void flipLever() {
+    moveForward(4, 30);
+    moveArm(82);
+    moveForward(-4, 30);
+    moveArm(95);
+    playSong();
+    moveForward(4,30);
+    moveArm(80);
+    moveForward(-4, 30);
+    
+}
 
+int main() { 
     //set servo maxes and mins  
     ArmServo.SetMin(553);
     ArmServo.SetMax(2333);
@@ -165,20 +168,28 @@ int main() {
     HandServo.SetDegree(65);
     //playSong();
 
+    //initialize RCS course
+    RCS.InitializeTouchMenu("B1C1qRo4r");
+ 
+    //move forward when light turns on
+    float lightSense = Cds.Value();
+    LCD.Clear();
+    LCD.Write(lightSense);
+    Sleep(1.0);
+
+
+
     //if run testing code - true
     //if running a run code - false
     bool test = false;
     int run = 6;
 
     if (test == true) {
- 
-        Sleep(2.0);
-        moveHand(180);
-        Sleep(2.0);
-        moveHand(68);
+
+        int colorFactor = 7;
+        int *pointer = &colorFactor;
+        //moveForward(10, 25, true, pointer);
         
-
-
     } else if (run == 1) {
         /*Checkpoint 2: Up to the light, hit the ticket and go back down*/
         //wait til light turns on
@@ -397,6 +408,7 @@ int main() {
         /*
         Entire Course Run!!!
         */
+        
 
        //wait til light turns on
         while (lightSense > 2.9) {
@@ -420,7 +432,11 @@ int main() {
         moveArm(30);
 
         //moves back to adjust on wall
-        moveForward(-23, 30);
+        moveForward(-6, 30);
+        turnRobot(20);
+        moveForward(-5,30);
+        turnRobot(-20);
+        moveForward(-15, 30);
         moveArm(0);
 
     /*Ticket Kiosk*/
@@ -437,29 +453,110 @@ int main() {
         moveForward(-10, 30);
 
         //move to ticket light
-        moveForward(7, 30);
+        moveForward(5, 30);
         turnRobot(-45);
-        moveForward(14.5, 30);
+        moveForward(16.5, 30);
 
         //get color of the light
-        float colorFactor = 7;
+        float colorFactor = 12;
         float time = TimeNow()+2;
-        //if colorFactor = 7 -> blue (default ig)
-        //if colorFactor = 11 -> red
+        //if colorFactor = 12 -> blue (default ig)
+        //if colorFactor = 17 -> red
         while (time > TimeNow()) {
             lightSense = Cds.Value();
-            if (lightSense < 1) {
+            if (lightSense > 2.9) {
+                moveForward(0.5,25);
+            } else if (lightSense < 1) {
                 LCD.Clear(RED);
                 LCD.Write(lightSense);
-                colorFactor = 11;
+                colorFactor = 17;
             } else if (lightSense > 1) {
                 LCD.Clear(BLUE);
                 LCD.Write(lightSense);
             }
         }
 
+        Sleep(0.5);
+
         //readjust against red wall
+        moveForward(7, 30);
+
+        //move to correct light
+        if (colorFactor == 12) {
+            moveForward(-sqrt(244)+1, 30);
+        } else if (colorFactor == 17) {
+            moveForward(-sqrt(514)+1, 30);
+        }
+        turnRobot(-45);
+        moveForward(colorFactor, 30);
+        Sleep(1.0);
+        moveForward(-colorFactor-3, 30);
+        turnRobot(-90);
+
+        
+
+        /*Passport Stamp*/
+
+        //adjust by backing into wall
+        moveForward(-30, 30);
+
+        //move to passport stamp
+        moveForward(5, 30);
+        moveArm(85);
+        Sleep(0.5);
+        turnRobot(90);
+        moveForward(8, 30);
+        turnRobot(-90);
+        moveForward(5, 20);
+        Sleep(2.0);
+
+        //move hand to flip stamp
+        //Sleep(0.5);
+        //moveHand(5);
+        //Sleep(0.5);
+        //moveHand(100);
+
+        /*Fuel Lever*/ 
+
+        //move back to adjust against wall
+        moveForward(-10, 30);
+        moveArm(0);
+        turnRobot(45);
+        moveForward(-6, 30);
+        turnRobot(45);
+        moveForward(-20, 30);
+
+        //move to correct lever
         moveForward(4, 30);
+        turnRobot(-90);
+        moveForward(15, 30);
+        int lever = RCS.GetCorrectLever();
+        if (lever == 3) {
+            moveForward(5, 30);
+            flipLever();
+        } else if (lever == 2) {
+            turnRobot(90);
+            moveForward(3, 30);
+            turnRobot(-90);
+            moveForward(4, 30);
+            flipLever();
+        } else if (lever == 1) {
+            turnRobot(90);
+            moveForward(6, 30);
+            turnRobot(-90);
+            moveForward(4, 30);
+            flipLever();
+        }
+        //move back
+        moveForward(-5, 30);
+        turnRobot(90);
+        moveForward(10+lever*3, 30);
+        turnRobot(-45);
+        //hit the end button
+        moveForward(10, 30);
+
+
+
 
 
 
