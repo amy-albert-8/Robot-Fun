@@ -186,9 +186,11 @@ int main() {
 
     if (test == true) {
 
-        int colorFactor = 7;
-        int *pointer = &colorFactor;
-        //moveForward(10, 25, true, pointer);
+        while (true) {
+            float light = Cds.Value();
+            LCD.WriteLine(light);
+            Sleep(2.0);
+        }
         
     } else if (run == 1) {
         /*Checkpoint 2: Up to the light, hit the ticket and go back down*/
@@ -430,6 +432,10 @@ int main() {
         moveArm(55);
         Sleep(0.5);
         moveArm(30);
+        Sleep(0.5);
+        moveArm(55);
+        Sleep(0.5);
+        moveArm(28);
 
         //moves back to adjust on wall
         moveForward(-6, 30);
@@ -438,13 +444,14 @@ int main() {
         turnRobot(-20);
         moveForward(-15, 30);
         moveArm(0);
+        moveHand(65);
 
     /*Ticket Kiosk*/
 
         //get up the ramp
-        moveForward(10, 30);
+        moveForward(9, 30);
         turnRobot(-45);
-        moveForward(9.5, 30);
+        moveForward(11, 30);
         turnRobot(45);
         moveForward(20, 30);
 
@@ -455,7 +462,11 @@ int main() {
         //move to ticket light
         moveForward(5, 30);
         turnRobot(-45);
-        moveForward(16.5, 30);
+
+        //readjust against the wall
+        moveForward(25, 30);
+        Sleep(0.5);
+        moveForward(-4, 30);
 
         //get color of the light
         float colorFactor = 12;
@@ -464,13 +475,13 @@ int main() {
         //if colorFactor = 17 -> red
         while (time > TimeNow()) {
             lightSense = Cds.Value();
-            if (lightSense > 2.9) {
-                moveForward(0.5,25);
-            } else if (lightSense < 1) {
+            if (lightSense > 2.5) {
+                moveForward(-0.25, 25);
+            } else if (lightSense < .7) {
                 LCD.Clear(RED);
                 LCD.Write(lightSense);
                 colorFactor = 17;
-            } else if (lightSense > 1) {
+            } else if (lightSense >= .7) {
                 LCD.Clear(BLUE);
                 LCD.Write(lightSense);
             }
@@ -478,14 +489,11 @@ int main() {
 
         Sleep(0.5);
 
-        //readjust against red wall
-        moveForward(7, 30);
-
         //move to correct light
         if (colorFactor == 12) {
-            moveForward(-sqrt(244)+1, 30);
+            moveForward(-9, 30);
         } else if (colorFactor == 17) {
-            moveForward(-sqrt(514)+1, 30);
+            moveForward(-12, 30);
         }
         turnRobot(-45);
         moveForward(colorFactor, 30);
@@ -493,21 +501,20 @@ int main() {
         moveForward(-colorFactor-3, 30);
         turnRobot(-90);
 
-        
-
         /*Passport Stamp*/
 
         //adjust by backing into wall
-        moveForward(-30, 30);
+        moveForward(-25, 30);
 
         //move to passport stamp
         moveForward(5, 30);
-        moveArm(85);
         Sleep(0.5);
         turnRobot(90);
-        moveForward(8, 30);
+        moveForward(3.15, 30);
         turnRobot(-90);
-        moveForward(5, 20);
+        moveArm(85);
+        Sleep(0.5);
+        moveForward(4.5, 20);
         Sleep(2.0);
 
         //move hand to flip stamp
@@ -547,6 +554,9 @@ int main() {
             moveForward(4, 30);
             flipLever();
         }
+
+        /*End Button*/
+
         //move back
         moveForward(-5, 30);
         turnRobot(90);
@@ -554,16 +564,5 @@ int main() {
         turnRobot(-45);
         //hit the end button
         moveForward(10, 30);
-
-
-
-
-
-
-
-
-
-
-
     }
 }
