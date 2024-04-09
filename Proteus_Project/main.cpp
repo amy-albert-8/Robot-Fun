@@ -24,7 +24,7 @@ FEHMotor RightMotor(FEHMotor::Motor3, 9.0);
 FEHMotor LeftMotor(FEHMotor::Motor1, 9.0); 
 DigitalEncoder RightEncoder(FEHIO::P0_3);
 DigitalEncoder LeftEncoder(FEHIO::P2_0);
-FEHServo HandServo(FEHServo::Servo3);
+FEHServo HandServo(FEHServo::Servo2);
 FEHServo ArmServo(FEHServo::Servo7);
  
 
@@ -407,9 +407,9 @@ int main() {
         moveForward(-19, 35);
         
     } else if(run == 6) {
-        /*
-        Entire Course Run!!!
-        */
+    /*
+    Entire Course Run!!!
+    */
         
 
        //wait til light turns on
@@ -417,15 +417,15 @@ int main() {
             lightSense = Cds.Value();
         }
         //hit start button
-        moveForward(-4, 30);
-        moveForward(4, 30);
+        moveForward(-4, 35);
+        moveForward(4, 35);
 
     /*Luggage Drop Off*/
 
         //move to luggage drop
-        moveForward(9, 30);
+        moveForward(9, 35);
         turnRobot(-45);
-        moveForward(5, 30);
+        moveForward(5, 35);
 
         //drop luggage
         moveHand(180);
@@ -438,35 +438,35 @@ int main() {
         moveArm(28);
 
         //moves back to adjust on wall
-        moveForward(-6, 30);
+        moveForward(-6, 35);
         turnRobot(20);
-        moveForward(-5,30);
+        moveForward(-5, 35);
         turnRobot(-20);
-        moveForward(-15, 30);
+        moveForward(-15, 35);
         moveArm(0);
         moveHand(65);
 
     /*Ticket Kiosk*/
 
         //get up the ramp
-        moveForward(9, 30);
+        moveForward(9, 35);
         turnRobot(-45);
-        moveForward(11, 30);
+        moveForward(11, 35);
         turnRobot(45);
-        moveForward(20, 30);
+        moveForward(20, 35);
 
         //adjust against wall
         turnRobot(90);
-        moveForward(-10, 30);
+        moveForward(-12, 35);
 
         //move to ticket light
-        moveForward(5, 30);
+        moveForward(5, 35);
         turnRobot(-45);
 
         //readjust against the wall
-        moveForward(25, 30);
+        moveForward(25, 35);
         Sleep(0.5);
-        moveForward(-4, 30);
+        moveForward(-4, 35);
 
         //get color of the light
         float colorFactor = 12;
@@ -491,26 +491,26 @@ int main() {
 
         //move to correct light
         if (colorFactor == 12) {
-            moveForward(-9, 30);
+            moveForward(-9, 35);
         } else if (colorFactor == 17) {
-            moveForward(-12, 30);
+            moveForward(-12, 35);
         }
         turnRobot(-45);
-        moveForward(colorFactor, 30);
+        moveForward(colorFactor, 35);
         Sleep(1.0);
-        moveForward(-colorFactor-3, 30);
+        moveForward(-colorFactor-3, 35);
         turnRobot(-90);
 
-        /*Passport Stamp*/
+    /*Passport Stamp*/
 
         //adjust by backing into wall
-        moveForward(-25, 30);
+        moveForward(-25, 35);
 
         //move to passport stamp
-        moveForward(5, 30);
+        moveForward(5, 35);
         Sleep(0.5);
         turnRobot(90);
-        moveForward(3.15, 30);
+        moveForward(3.15, 35);
         turnRobot(-90);
         moveArm(85);
         Sleep(0.5);
@@ -523,39 +523,40 @@ int main() {
         //Sleep(0.5);
         //moveHand(100);
 
-        /*Fuel Lever*/ 
+    /*Fuel Lever*/ 
 
         //move back to adjust against wall
         moveForward(-10, 30);
         moveArm(0);
         turnRobot(45);
         moveForward(-6, 30);
-        turnRobot(45);
-        moveForward(-20, 30);
+        turnRobot(-45);
+        moveForward(-10, 30);
 
-        //move to correct lever
-        moveForward(4, 30);
+        //move down the ramp
         turnRobot(-90);
-        moveForward(15, 30);
+        moveForward(23, 40);
+
+        //travel to correct lever and flip
         int lever = RCS.GetCorrectLever();
         if (lever == 3) {
-            moveForward(5, 30);
+            moveForward(3, 30);
             flipLever();
         } else if (lever == 2) {
             turnRobot(90);
-            moveForward(3, 30);
+            moveForward(1, 30);
             turnRobot(-90);
-            moveForward(4, 30);
+            moveForward(3, 30);
             flipLever();
         } else if (lever == 1) {
             turnRobot(90);
-            moveForward(6, 30);
+            moveForward(2, 30);
             turnRobot(-90);
-            moveForward(4, 30);
+            moveForward(3, 30);
             flipLever();
         }
 
-        /*End Button*/
+    /*End Button*/
 
         //move back
         moveForward(-5, 30);
