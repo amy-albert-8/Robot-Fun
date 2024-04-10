@@ -146,15 +146,16 @@ void playSong() {
 }
 
 void flipLever() {
-    moveForward(4, 30);
     moveArm(82);
-    moveForward(-4, 30);
+    Sleep(0.5);
+    moveForward(-3, 30);
     moveArm(95);
     playSong();
-    moveForward(4,30);
-    moveArm(80);
-    moveForward(-4, 30);
-    
+    moveForward(4.2, 30);
+    Sleep(0.5);
+    moveArm(76);
+    moveForward(-3, 30);    
+    moveArm(0);
 }
 
 int main() { 
@@ -197,8 +198,11 @@ int main() {
     */
         
        //wait til light turns on
-        while (lightSense > 2.9) {
+        while (lightSense > 2.5) {
             lightSense = Cds.Value();
+            LCD.Clear();
+            LCD.Write(lightSense);
+            Sleep(0.5);
         }
         //hit start button
         moveForward(-3.8, 35);
@@ -207,7 +211,7 @@ int main() {
     /*Luggage Drop Off*/
 
         //move to luggage drop
-        moveForward(9, 35);
+        moveForward(8.5, 35);
         turnRobot(-45);
         moveForward(5, 35);
 
@@ -235,49 +239,67 @@ int main() {
         //get up the ramp
         moveForward(8, 35);
         turnRobot(-45);
-        moveForward(11, 35);
+        moveForward(10, 35);
         turnRobot(45);
         moveForward(20, 35);
 
         //adjust against wall
         turnRobot(90);
-        moveForward(-12, 35);
+        moveForward(-10.5, 35);
 
         //move to ticket light
-        moveForward(5, 35);
-        turnRobot(-45);
+        moveForward(3.75, 35);
+        turnRobot(-47);
 
-        //readjust against the wall
-        moveForward(25, 35);
+        float colorFactor = 12; 
+        bool light = false;
+        //readjust against the wall, while testing for the color red
+        moveForward(20, 35);
+        for (int i = 0; i < 4; i++) {
+            Sleep(0.2);
+            lightSense = Cds.Value();
+            if (lightSense < 1.0) {
+                colorFactor = 16.5;
+                LCD.Clear(RED);
+                LCD.Write(lightSense);
+                light = true;
+            }
+            moveForward(1, 35);
+        }
         Sleep(0.5);
         moveForward(-4, 35);
 
         //get color of the light
-        float colorFactor = 12;
-        float time = TimeNow()+2;
         //if colorFactor = 12 -> blue (default ig)
         //if colorFactor = 17 -> red
-        while (time > TimeNow()) {
-            lightSense = Cds.Value();
-            if (lightSense > 2.5) {
-                moveForward(-0.25, 25);
-            } else if (lightSense < .75) {
-                LCD.Clear(RED);
-                LCD.Write(lightSense);
-                colorFactor = 16.5;
-            } else if (lightSense >= .75) {
+        if (!light) {
+            float time = TimeNow()+2;
+            while (time > TimeNow()) {
+                lightSense = Cds.Value();
+                if (lightSense > 2.5) {
+                    moveForward(-0.25, 25);
+                } else if (lightSense < 1.0) {
+                    LCD.Clear(RED);
+                    LCD.Write(lightSense);
+                    colorFactor = 16.5;
+                } else if (lightSense >= 1.0) {
+                    LCD.Clear(BLUE);
+                    LCD.Write(lightSense);
+                }
+            }
+            if (colorFactor == 12) {
                 LCD.Clear(BLUE);
-                LCD.Write(lightSense);
             }
         }
+
 
         Sleep(0.5);
 
         //move to correct light
         if (colorFactor == 12) {
-            moveForward(-9, 35);
+            moveForward(-8.5, 35);
         } else if (colorFactor == 16.5) {
-            moveForward(-12.5, 35);
+            moveForward(-13.5, 35);
         }
         turnRobot(-45);
         moveForward(colorFactor, 35);
@@ -294,21 +316,21 @@ int main() {
         moveForward(5, 35);
         Sleep(0.5);
         turnRobot(90);
-        moveForward(3.15, 35);
+        moveForward(3.8, 35);
         if (colorFactor == 16.5) {
-            moveForward(4, 35);
+            moveForward(5, 35);
         }
         turnRobot(-90);
         moveArm(85);
         Sleep(0.5);
-        moveForward(5, 20);
+        moveForward(5, 35);
         Sleep(2.0);
 
         //move hand to flip stamp
         Sleep(0.5);
-        moveHand(5);
+        moveHand(0);
         Sleep(0.5);
-        moveHand(100);
+        moveHand(65);
 
     /*Fuel Lever*/ 
 
@@ -322,7 +344,7 @@ int main() {
 
         //move down the ramp
         turnRobot(-90);
-        moveForward(23, 40);
+        moveForward(24, 40);
 
         //travel to correct lever and flip
         int lever = RCS.GetCorrectLever();
@@ -330,27 +352,32 @@ int main() {
             moveForward(3, 30);
             flipLever();
         } else if (lever == 2) {
-            turnRobot(45);
-            moveForward(0.5, 30);
-            turnRobot(-45);
-            moveForward(1.0, 30);
-            flipLever();
-        } else if (lever == 1) {
+            /*THIS LEVER WORKS BEST LOL*/
             turnRobot(45);
             moveForward(0.8, 30);
             turnRobot(-45);
-            moveForward(1.0, 30);
+            moveForward(1, 35);
+            flipLever();
+        } else if (lever == 1) {
+            /**FIX THIS SHIT IDK WHAT IS GOING ON :(*/
+            turnRobot(45);
+            moveForward(2, 30);
+            turnRobot(-45);
+            moveForward(1, 35);
             flipLever();
         }
 
     /*End Button*/
 
         //move back
-        moveForward(-5, 30);
+        moveForward(-2, 30);
         turnRobot(90);
-        moveForward(10+lever*3, 30);
+        moveForward(lever*3, 30);
+        if (lever == 1) {
+            moveForward(5, 35);
+        }
         turnRobot(-45);
         //hit the end button
-        moveForward(10, 30);
+        moveForward(18, 30);
     }
 }
