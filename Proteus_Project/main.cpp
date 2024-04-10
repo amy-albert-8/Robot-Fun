@@ -190,234 +190,18 @@ int main() {
             float light = Cds.Value();
             LCD.WriteLine(light);
             Sleep(2.0);
-        }
-        
-    } else if (run == 1) {
-        /*Checkpoint 2: Up to the light, hit the ticket and go back down*/
-        //wait til light turns on
-        while (lightSense > 2.9) {
-            lightSense = Cds.Value();
-        }
-        
-        //move out of box and up ramp
-
-        turnRobot(-30);
-        //move forward out of box
-        moveForward(1.5, 25);
-        //readjust angle
-        turnRobot(-30);
-        //move forward up the ramp
-        moveForward(32, 25);
-        Sleep(1.0);
-
-
-        //move to ticket light
-
-        //set angle to pi/4
-        turnRobot(45);
-        Sleep(1.0);
-
-        //move forward to light
-        moveForward(19.5, 25);
-        Sleep(1.0);
-
-
-        //check the light color
-
-        float colorFactor = 7;
-        //if colorFactor = 7 -> blue (default ig)
-        //if colorFactor = 11 -> red
-        Sleep (1.0);
-        lightSense = Cds.Value();
-        if (lightSense < 1) {
-            LCD.Clear(RED);
-            LCD.Write(lightSense);
-            colorFactor = 11;
-        } else if (lightSense > 1) {
-            LCD.Clear(BLUE);
-            LCD.Write(lightSense);
-        }
-
-        //back up, turn, and move to hit correct ticket
-        moveForward(-colorFactor-3, 25);
-        Sleep(1.0);
-        turnRobot(-45);
-        //find cos(theta)
-        float forward = sqrt(2)/(2.2);
-        forward *= colorFactor;
-        //forward = colorFactor*cos(theta)
-
-        /*The assumption is that theta is 45 degrees, may need to update 
-        forward if the angle is found to be different.*/
-
-        //hopefully hitting the button
-        Sleep(1.0);
-        moveForward(forward+0.2, 25);
-        //backing up from the button
-        Sleep(1.0);
-        moveForward(-forward, 25);
-        Sleep(1.0);
-        //turn 45 degrees
-        turnRobot(45);
-        //move back from the button
-        moveForward(forward+0.5, 25);
-
-        //turn and go down ramp
-        turnRobot(135);
-        Sleep(1.0);
-        moveForward(35, 25);
-    } else if (run == 2) {
-
-        //wait til light turns on
-        while (lightSense > 2.9) {
-            lightSense = Cds.Value();
-        }
-        //hit start button
-        moveForward(-4, 30);
-        moveForward(4, 30);
-        
-        //move to levers
-        turnRobot(-65);
-        Sleep(1.0);
-        moveForward(3, 25);
-        Sleep(1.0);
-        turnRobot(15);
-
-        //moveForward
-        Sleep(1.0);
-        turnRobot(90);
-
-        //check which lever
-        float lever = 0;
-        int leverMultiply = RCS.GetCorrectLever()*3;
-        lever += leverMultiply;
-
-        //move to that lever
-        moveForward(10 + lever, 25);
-        turnRobot(90);
-
-        /*If too close to or too far away from the lever, back up or
-        drive forward here.*/
-        //move to lever
-
-        //TODO: flip lever down
-        moveForward(-6, 25);
-        Sleep(5.0);
-        //TODO: move arm to below lever
-        moveForward(6,25);
-        //TODO: flip lever up
-
-    } else if (run == 3) {
-        /*Attempt to get full credit on Checkpoint 3
-        without getting the correct lever, will only hit lever A*/
-
-        //wait til light turns on
-        while (lightSense > 2.9) {
-            lightSense = Cds.Value();
-        }
-        
-       //move to levers
-       turnRobot(-65);
-       Sleep(1.0);
-       moveForward(3, 25);
-       Sleep(1.0);
-       turnRobot(20);
-       moveForward(-5, 25);
-       Sleep(1.0);
-       turnRobot(90);
-
-       moveForward(4.5, 25);
-       Sleep(1.0);
-       //flip lever down
-       moveArm(85);
-       Sleep(1.0);
-       moveForward(-4, 25);
-       Sleep(1.0);
-       //move arm to below lever position
-       moveArm(95);
-       Sleep(5.0);
-       moveForward(4, 25);
-       //flip lever up
-       moveArm(65);
-    } else if(run == 4) {
-        //wait til light turns on
-        while (lightSense > 2.9) {
-            lightSense = Cds.Value();
-        }
-        
-        //readjust out of box
-        turnRobot(-65);
-        Sleep(1.0);
-        moveForward(4, 35);
-        Sleep(1.0);
-        turnRobot(15);
-
-        //up the ramp + turn
-        moveForward(25, 35);
-        turnRobot(90);
-        //back up into wall to restraighten
-        moveForward(-13, 35);
-        //move past luggage drop + turn towards ticket
-        moveForward(14, 35);
-        turnRobot(-90);
-        //move towards ticket + turn towards passport
-        moveForward(8.5, 35);
-        turnRobot(-96);
-        //set arm down
-        moveArm(85);
-        Sleep (1.0);
-
-        moveForward(0.8,25);
-
-        Sleep(1.0);
-        moveHand(5);
-
-        Sleep(1.0);
-        moveHand(100);
-
-        Sleep(1.0);
-        moveForward(-6, 35);
-        moveArm(0);
-    } else if (run == 5) {
-
-        //wait til light turns on
-        while (lightSense > 2.9) {
-            lightSense = Cds.Value();
-        }  
-
-         //hit start button
-        moveForward(-4, 30);
-        moveForward(4, 30);
-
-        //move to luggage drop
-        moveForward(9.5, 30);
-        turnRobot(-45);
-        moveForward(5, 30);
-
-
-        moveHand(180);
-        moveArm(55);
-        Sleep(0.5);
-        moveArm(30);
-
-        Sleep(1.0);
-        //moves back to hit button
-        moveForward(-8,30);
-        turnRobot(45);
-        moveForward(-19, 35);
-        
+            } 
     } else if(run == 6) {
     /*
     Entire Course Run!!!
     */
         
-
        //wait til light turns on
         while (lightSense > 2.9) {
             lightSense = Cds.Value();
         }
         //hit start button
-        moveForward(-4, 35);
+        moveForward(-3.8, 35);
         moveForward(4, 35);
 
     /*Luggage Drop Off*/
@@ -449,7 +233,7 @@ int main() {
     /*Ticket Kiosk*/
 
         //get up the ramp
-        moveForward(9, 35);
+        moveForward(8, 35);
         turnRobot(-45);
         moveForward(11, 35);
         turnRobot(45);
@@ -477,11 +261,11 @@ int main() {
             lightSense = Cds.Value();
             if (lightSense > 2.5) {
                 moveForward(-0.25, 25);
-            } else if (lightSense < .7) {
+            } else if (lightSense < .75) {
                 LCD.Clear(RED);
                 LCD.Write(lightSense);
-                colorFactor = 17;
-            } else if (lightSense >= .7) {
+                colorFactor = 16.5;
+            } else if (lightSense >= .75) {
                 LCD.Clear(BLUE);
                 LCD.Write(lightSense);
             }
@@ -492,8 +276,8 @@ int main() {
         //move to correct light
         if (colorFactor == 12) {
             moveForward(-9, 35);
-        } else if (colorFactor == 17) {
-            moveForward(-12, 35);
+        } else if (colorFactor == 16.5) {
+            moveForward(-12.5, 35);
         }
         turnRobot(-45);
         moveForward(colorFactor, 35);
@@ -511,17 +295,20 @@ int main() {
         Sleep(0.5);
         turnRobot(90);
         moveForward(3.15, 35);
+        if (colorFactor == 16.5) {
+            moveForward(4, 35);
+        }
         turnRobot(-90);
         moveArm(85);
         Sleep(0.5);
-        moveForward(4.5, 20);
+        moveForward(5, 20);
         Sleep(2.0);
 
         //move hand to flip stamp
-        //Sleep(0.5);
-        //moveHand(5);
-        //Sleep(0.5);
-        //moveHand(100);
+        Sleep(0.5);
+        moveHand(5);
+        Sleep(0.5);
+        moveHand(100);
 
     /*Fuel Lever*/ 
 
@@ -543,16 +330,16 @@ int main() {
             moveForward(3, 30);
             flipLever();
         } else if (lever == 2) {
-            turnRobot(90);
-            moveForward(1, 30);
-            turnRobot(-90);
-            moveForward(3, 30);
+            turnRobot(45);
+            moveForward(0.5, 30);
+            turnRobot(-45);
+            moveForward(1.0, 30);
             flipLever();
         } else if (lever == 1) {
-            turnRobot(90);
-            moveForward(2, 30);
-            turnRobot(-90);
-            moveForward(3, 30);
+            turnRobot(45);
+            moveForward(0.8, 30);
+            turnRobot(-45);
+            moveForward(1.0, 30);
             flipLever();
         }
 
