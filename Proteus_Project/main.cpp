@@ -151,7 +151,7 @@ void flipLever() {
     moveForward(-3, 30);
     moveArm(95);
     playSong();
-    moveForward(4.2, 30);
+    moveForward(3, 30);
     Sleep(0.5);
     moveArm(76);
     moveForward(-3, 30);    
@@ -162,11 +162,11 @@ int main() {
     //set servo maxes and mins  
     ArmServo.SetMin(553);
     ArmServo.SetMax(2333);
-    //HandServo.SetMin(500);
-    //HandServo.SetMax(2333);
+    HandServo.SetMin(450);
+    HandServo.SetMax(2333);
 
     ArmServo.SetDegree(45);
-    HandServo.SetDegree(65);
+    HandServo.SetDegree(160);
     //playSong();
 
     //initialize RCS course
@@ -187,11 +187,12 @@ int main() {
 
     if (test == true) {
 
-        while (true) {
-            float light = Cds.Value();
-            LCD.WriteLine(light);
-            Sleep(2.0);
-            } 
+        moveHand(160);
+        Sleep(1.0);
+        moveHand(75);
+        Sleep(1.0);
+        moveHand(60);
+
     } else if(run == 6) {
     /*
     Entire Course Run!!!
@@ -216,7 +217,7 @@ int main() {
         moveForward(5, 35);
 
         //drop luggage
-        moveHand(180);
+        moveHand(60);
         moveArm(55);
         Sleep(0.5);
         moveArm(30);
@@ -232,7 +233,7 @@ int main() {
         turnRobot(-20);
         moveForward(-15, 35);
         moveArm(0);
-        moveHand(65);
+        moveHand(160);
 
     /*Ticket Kiosk*/
 
@@ -316,21 +317,22 @@ int main() {
         moveForward(5, 35);
         Sleep(0.5);
         turnRobot(90);
-        moveForward(3.8, 35);
+        moveForward(5.15, 35);
         if (colorFactor == 16.5) {
-            moveForward(5, 35);
+            moveForward(4.3, 35);
         }
         turnRobot(-90);
         moveArm(85);
         Sleep(0.5);
-        moveForward(5, 35);
+        moveForward(5.5, 35);
         Sleep(2.0);
 
         //move hand to flip stamp
         Sleep(0.5);
-        moveHand(0);
-        Sleep(0.5);
-        moveHand(65);
+        moveHand(50);
+        Sleep(1.0);
+        moveHand(160);
+        Sleep(1.0);
 
     /*Fuel Lever*/ 
 
@@ -348,22 +350,20 @@ int main() {
 
         //travel to correct lever and flip
         int lever = RCS.GetCorrectLever();
-        if (lever == 3) {
-            moveForward(3, 30);
-            flipLever();
-        } else if (lever == 2) {
-            /*THIS LEVER WORKS BEST LOL*/
-            turnRobot(45);
-            moveForward(0.8, 30);
-            turnRobot(-45);
-            moveForward(1, 35);
+        if (lever == 2) {
+            turnRobot(-10);
+            moveForward(5.5, 30);
             flipLever();
         } else if (lever == 1) {
-            /**FIX THIS SHIT IDK WHAT IS GOING ON :(*/
-            turnRobot(45);
+            /*THIS LEVER WORKS BEST LOL*/
+            turnRobot(60);
+            moveForward(1.2, 30);
+            turnRobot(-60);
+            flipLever();
+        } else if (lever == 0) {
+            turnRobot(70);
             moveForward(2, 30);
-            turnRobot(-45);
-            moveForward(1, 35);
+            turnRobot(-65);
             flipLever();
         }
 
@@ -372,9 +372,9 @@ int main() {
         //move back
         moveForward(-2, 30);
         turnRobot(90);
-        moveForward(lever*3, 30);
-        if (lever == 1) {
-            moveForward(5, 35);
+        moveForward(2+lever*3, 30);
+        if (lever == 0) {
+            moveForward(3, 35);
         }
         turnRobot(-45);
         //hit the end button
