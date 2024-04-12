@@ -151,9 +151,10 @@ void flipLever() {
     moveForward(-3, 30);
     moveArm(95);
     playSong();
-    moveForward(3, 30);
+    moveForward(3.2, 30);
     Sleep(0.5);
     moveArm(76);
+    Sleep(0.5);
     moveForward(-3, 30);    
     moveArm(0);
 }
@@ -317,9 +318,9 @@ int main() {
         moveForward(5, 35);
         Sleep(0.5);
         turnRobot(90);
-        moveForward(5.15, 35);
+        moveForward(5.2, 35);
         if (colorFactor == 16.5) {
-            moveForward(4.3, 35);
+            moveForward(4.25, 35);
         }
         turnRobot(-90);
         moveArm(85);
@@ -352,7 +353,9 @@ int main() {
         int lever = RCS.GetCorrectLever();
         if (lever == 2) {
             turnRobot(-10);
-            moveForward(5.5, 30);
+            moveForward(4, 30);
+            turnRobot(15);
+            moveForward(2.5, 30);
             flipLever();
         } else if (lever == 1) {
             /*THIS LEVER WORKS BEST LOL*/
