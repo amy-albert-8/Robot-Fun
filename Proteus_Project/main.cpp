@@ -171,7 +171,7 @@ int main() {
     //playSong();
 
     //initialize RCS course
-    //RCS.InitializeTouchMenu("B1C1qRo4r");
+    RCS.InitializeTouchMenu("B1C1qRo4r");
     
  
     //move forward when light turns on
@@ -200,8 +200,6 @@ int main() {
     Entire Course Run!!!
     */
 
-        //set lever when RCS is down (0=A, 1=AI, 2=B)
-        int lever = 0;
         
        //wait til light turns on
         while (lightSense > 2.5) {
@@ -211,15 +209,15 @@ int main() {
             Sleep(0.5);
         }
         //hit start button
-        moveForward(-3.8, 55);
-        moveForward(4, 55);
+        moveForward(-3.8, 40);
+        moveForward(4, 40);
 
     /*Luggage Drop Off*/
 
         //move to luggage drop
-        moveForward(8.5, 55);
+        moveForward(8.5, 40);
         turnRobot(-45);
-        moveForward(5, 55);
+        moveForward(5, 40);
 
         //drop luggage
         moveHand(60);
@@ -232,35 +230,35 @@ int main() {
         moveArm(28);
 
         //moves back to adjust on wall
-        moveForward(-6, 55);
+        moveForward(-6, 40);
         turnRobot(20);
-        moveForward(-5, 55);
+        moveForward(-5, 40);
         turnRobot(-20);
-        moveForward(-15, 55);
+        moveForward(-15, 40);
         moveArm(0);
         moveHand(160);
 
     /*Ticket Kiosk*/
 
         //get up the ramp
-        moveForward(8, 55);
+        moveForward(8, 40);
         turnRobot(-45);
-        moveForward(10, 55);
+        moveForward(10, 40);
         turnRobot(45);
-        moveForward(20, 55);
+        moveForward(20, 40);
 
         //adjust against wall
         turnRobot(90);
-        moveForward(-10.5, 55);
+        moveForward(-10.5, 40);
 
         //move to ticket light
-        moveForward(3.75, 55);
+        moveForward(3.75, 40);
         turnRobot(-47);
 
         float colorFactor = 12; 
         bool light = false;
         //readjust against the wall, while testing for the color red
-        moveForward(20, 55);
+        moveForward(20, 45);
         for (int i = 0; i < 4; i++) {
             Sleep(0.2);
             lightSense = Cds.Value();
@@ -270,10 +268,10 @@ int main() {
                 LCD.Write(lightSense);
                 light = true;
             }
-            moveForward(1, 55);
+            moveForward(1, 40);
         }
         Sleep(0.5);
-        moveForward(-4, 55);
+        moveForward(-4, 40);
 
         //get color of the light
         //if colorFactor = 12 -> blue (default ig)
@@ -303,34 +301,34 @@ int main() {
 
         //move to correct light
         if (colorFactor == 12) {
-            moveForward(-8.5, 55);
+            moveForward(-8.5, 40);
         } else if (colorFactor == 16.5) {
-            moveForward(-13.5, 55);
+            moveForward(-13.5, 40);
         }
         turnRobot(-45);
-        moveForward(colorFactor, 55);
+        moveForward(colorFactor, 40);
         Sleep(1.0);
-        moveForward(-colorFactor-3, 55);
+        moveForward(-colorFactor-3, 40);
         turnRobot(-90);
 
     /*Passport Stamp*/
 
         //adjust by backing into wall
-        moveForward(-25, 55);
+        moveForward(-25, 40);
 
         //move to passport stamp
-         moveForward(5, 55);
+         moveForward(5, 40);
         Sleep(0.5);
         turnRobot(90);
-        moveForward(4.6, 55);
+        moveForward(5, 40);
         if (colorFactor == 16.5) {
-            moveForward(4.25, 55);
+            moveForward(4.2, 40);
         }
 
         turnRobot(-95);
-        moveArm(85);
+        moveArm(86);
         Sleep(0.5);
-        moveForward(5.5, 55);
+        moveForward(5.5, 40);
         Sleep(2.0);
 
         //move hand to flip stamp
@@ -341,7 +339,7 @@ int main() {
         Sleep(1.0);
 
         //try the stamp again
-        moveForward(0.5, 55);
+        moveForward(0.25, 40);
         Sleep(0.5);
         moveHand(50);
         Sleep(1.0);
@@ -351,48 +349,49 @@ int main() {
     /*Fuel Lever*/ 
 
         //move back to adjust against wall
-        moveForward(-10, 55);
+        moveForward(-10, 40);
         moveArm(0);
         turnRobot(45);
-        moveForward(-6, 55);
+        moveForward(-6, 40);
         turnRobot(-45);
-        moveForward(-10, 55);
+        moveForward(-10, 40);
 
         //move down the ramp
         turnRobot(-90);
-        moveForward(24, 55);
+        moveForward(24, 40);
 
+        int lever = RCS.GetCorrectLever();
         //travel to correct lever and flip
         if (lever == 2) {
             turnRobot(-10);
-            moveForward(3, 55);
+            moveForward(3, 40);
             turnRobot(5);
-            moveForward(2.8, 55);
+            moveForward(2.6, 40);
             flipLever();
         } else if (lever == 1) {
             /*THIS LEVER WORKS BEST LOL*/
             turnRobot(60);
-            moveForward(1.2, 55);
+            moveForward(1.2, 40);
             turnRobot(-60);
             flipLever();
         } else if (lever == 0) {
             turnRobot(70);
-            moveForward(2.5, 55);
-            turnRobot(-60);
+            moveForward(2.0, 40);
+            turnRobot(-55);
             flipLever();
         }
 
     /*End Button*/
 
         //move back
-        moveForward(-2, 55);
+        moveForward(-2, 40);
         turnRobot(90);
-        moveForward(2+lever*3, 55);
+        moveForward(2+lever*3, 40);
         turnRobot(-45);
-        if (lever == 2) {
+        if (lever == 2 || lever==0) {
             turnRobot(-10);
         }
         //hit the end button
-        moveForward(18, 55);
+        moveForward(18, 40);
     }
 }
